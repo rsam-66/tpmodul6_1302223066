@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 class Program
 {
@@ -24,6 +25,8 @@ class SayaTubeVideo
         this.id = RandomNumber();
         this.title = title;
         this.playCount = 0;
+
+        Contract.Requires(this.title != null && title.Length <= 100);
     }
 
     private int RandomNumber()
@@ -34,7 +37,19 @@ class SayaTubeVideo
 
     public void IncreasePlayCount(int count)
     {
-        this.playCount = count;
+        Contract.Requires(count > 0 && count <= 10000000);
+        Contract.Requires(playCount <= int.MaxValue - count);
+        try
+        {
+            checked
+            {
+                playCount += count;
+            }
+        }
+        catch (OverflowException)
+        {
+            Console.WriteLine("Play count melebihi batas");
+        }
     }
 
     public void PrintVideoDetails()
